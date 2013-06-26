@@ -1,0 +1,53 @@
+#!/bin/sh
+
+### Init script from python-btcp package ###
+
+DAEMON="/usr/bin/twistd"
+PIDFILE="/var/run/twistd.pid"
+RUNCMD="-y /etc/btcp/btcp.tac"
+OPTIONS="--pidfile $PIDFILE $RUNCMD"
+
+if [ ! -x $DAEMON ]
+then
+  exit 0
+fi
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+. /lib/lsb/init-functions
+
+case "${1}" in
+  start)
+    log_daemon_msg "Starting BitTorrent Copy Daemon"
+
+    $DAEMON $OPTIONS
+
+    ;;
+
+  stop)
+    log_daemon_msg "Stopping BitTorrent Copy Daemon"
+
+    kill `cat $PIDFILE`
+    ;;
+
+  restart|force-reload)
+    log_daemon_msg "Restarting BitTorrent Copy Daemon"
+
+    kill `cat $PIDFILE`
+    sleep 1
+    $DAEMON $OPTIONS
+    ;;
+
+  status)
+    log_daemon_msg "Restarting BitTorrent Copy Daemon"
+
+    ps -p `cat $PIDFILE` > /dev/null 2>&1 && echo process is running || echo process is not running
+    ;;
+
+  *)
+    log_success_msg "Usage: ${0} {start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
