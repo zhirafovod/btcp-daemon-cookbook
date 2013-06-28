@@ -40,21 +40,14 @@ end
 #  shell "/bin/false"
 #end
 
-# install packages
-package 'python-twisted'
-package 'python2.7'
-package 'transmission-daemon'
-#package 'python-transmissionrpc'
-package 'python-pip' do
-  action :install
+# install binary dependencies 
+%w{python2.7 python-pip python-twisted transmission-daemon screen vim}.each do |p|
+  package p do
+    action :install
+  end
 end
-package 'screen'
-package 'vim'
 
-# install python modules for each module in the array separated by whitespaces
-python_virtualenv = "/var/lib/btcp/python"
-#%w{PAM==0.4.2 PyYAML==3.10 SOAPpy SQLAlchemy==0.8.0b2 SimpleDB==0.0.5 Twisted==12.0.0 Twisted-Conch==12.0.0 Twisted-Core==12.0.0 Twisted-Lore==12.0.0 Twisted-Mail==12.0.0 Twisted-Names==12.0.0 Twisted-News==12.0.0 Twisted-Runner==12.0.0 Twisted-Web==12.0.0 Twisted-Words==12.0.0 Twistr==1.0.0 argparse==1.2.1 chardet fpconst==0.7.2 iso8601==0.1.4 pyOpenSSL==0.13 pyasn1==0.1.3 pycassa==1.8.0-1 pycrypto==2.6 pyserial==2.5 python-apt==0.8.4 python-debian==0.1.21 python-debianbts==1.11 reportbug==6.4.3 simplejson==2.6.2 six==1.3.0 swampy==2.1.1 thrift==0.9.0 transmissionrpc==0.10 wsgiref==0.1.2 zope.interface==3.6.1}.each do |s|
-#%w{SQLAlchemy SimpleDB Twisted argparse pycassa simplejson transmissionrpc }.each do |s|
+# install python dependencies 
 %w{argparse pycassa simplejson transmissionrpc}.each do |s|
   p, v = s.split('>=', 2)
   python_pip p do
@@ -118,6 +111,13 @@ remote_directory "/usr/lib/python2.7/dist-packages" do
   #group "nobody"
   #mode 00755
   action :create
+end
+
+git "/usr/lib/python2.7/dist-packages/btcp" do
+  repository "https://github.com/zhirafovod/btcp-daemon.git"
+  user "root"
+  group "root"
+  action :sync
 end
 
 # deploy executables
