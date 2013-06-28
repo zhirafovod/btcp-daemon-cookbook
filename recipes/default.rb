@@ -8,7 +8,7 @@ node.default['container_name'] = node['name']
 File.open('/etc/resolv.conf') { |f| f.each_line { |l| node.default['container_name'] = $1 if l.match('^search\s+([^\.]+\.[^\.]+)') } }
 
 debian_version = File.open('/etc/debian_version'){ |file| file.read }
-if debian_version.start_with? ("wheezy","7")
+if debian_version.start_with?("wheezy","7")
         cookbook_file "/etc/apt/sources.list" do
                 source "sources.list.wheezy.erb"
                 mode "0644"
@@ -17,7 +17,7 @@ if debian_version.start_with? ("wheezy","7")
                 action :create
                 notifies :run, "execute[aptitude update]", :immediately
         end
-elsif debian_version.start_with? ("squeeze","6")
+elsif debian_version.start_with?("squeeze","6")
         cookbook_file "/etc/apt/sources.list" do
                 source "sources.list.wheezy.erb"
                 mode "0644"
